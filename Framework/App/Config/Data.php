@@ -4,7 +4,7 @@ namespace AllBear\LocalConfig\Framework\App\Config;
 
 class Data extends \Magento\Framework\App\Config\Data
 {
-    const LOCAL_CONFIG_FILE_NAME = '.local_config';
+    const LOCAL_CONFIG_FILE_NAME = '.local_config.json';
 
     private $localConfig = null;
 
@@ -16,12 +16,11 @@ class Data extends \Magento\Framework\App\Config\Data
             $configFileName = BP . DIRECTORY_SEPARATOR . self::LOCAL_CONFIG_FILE_NAME;
 
             if (file_exists($configFileName)) {
-                $configLines = file($configFileName);
+                $configJson = file_get_contents($configFileName);
+                $this->localConfig = json_decode($configJson, true);
 
-                foreach ($configLines as $configLine) {
-                    list($path, $value) = explode(' ', $configLine, 2);
-
-                    $this->localConfig[$path] = $value;
+                if (!$this->localConfig) {
+                    $this->localConfig = [];
                 }
             }
         }
